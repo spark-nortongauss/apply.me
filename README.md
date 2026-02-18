@@ -125,3 +125,17 @@ Deploy `services/ai-engine` as containerized FastAPI service and set `AI_SERVICE
 - Integrate real embedding model and RAG pipeline.
 - Add recruiter messaging and pipeline workflows.
 - Implement payment-gated premium features.
+
+## Build Failure Fix (Vercel prerender `/404`)
+
+The previous deployment failed during prerender because the app mixed App Router pages with unstable React 19 RC + legacy Pages Router error rendering behavior. That combination caused Vercel to execute `.next/server/pages/_error.js` and crash with `useContext` on `null`.
+
+What changed:
+
+- Standardized on stable `react@18.2.0` and `react-dom@18.2.0` and enforced workspace-wide versions via root `overrides`.
+- Upgraded Next.js to a patched 15.2.x release.
+- Added App Router-native `app/not-found.tsx` and `app/error.tsx` handlers so `/404` prerender uses App Router boundaries.
+- Isolated animation/3D dependencies (`gsap`, `three`) behind client-only dynamic imports (`ssr: false`) to avoid server execution.
+- Replaced deprecated Supabase auth helper usage with `@supabase/ssr` and moved OAuth callback exchange to server route handler cookie-aware clients.
+
+This keeps prerender deterministic and prevents Pages Router fallback logic from running in production builds.

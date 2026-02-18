@@ -10,5 +10,9 @@
     "build": "npm run build --workspace @pathfinder/web",
     "lint": "npm run lint --workspace @pathfinder/web",
     "typecheck": "npm run typecheck --workspace @pathfinder/web"
+  },
+  "overrides": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }
