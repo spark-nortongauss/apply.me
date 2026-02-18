@@ -1,3 +1,4 @@
+import { createSupabaseRouteHandlerClient } from "@/lib/supabase/route-handler";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -8,6 +9,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/?auth=missing_code", request.url));
   }
 
-  // Supabase exchange for session is handled client-side with @supabase/auth-helpers-nextjs.
-  return NextResponse.redirect(new URL(redirectTo, request.url));
+  const response = NextResponse.redirect(new URL(redirectTo, request.url));
+  const supabase = createSupabaseRouteHandlerClient(request, response);
+
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error) {
+    return NextResponse.redirect(new URL(`/?auth=callback_error&message=${encodeURIComponent(error.message)}`, request.url));
+  }
+
+  return response;
 }
