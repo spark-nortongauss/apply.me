@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-background text-text antialiased;
+}
+
+.section-shell {
+  @apply mx-auto w-full max-w-7xl px-6 lg:px-10;
+}
+
+.gradient-card {
+  background: linear-gradient(135deg, rgba(26, 31, 59, 0.95), rgba(46, 211, 230, 0.25));
+}

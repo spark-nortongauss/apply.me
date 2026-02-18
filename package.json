@@ -1,0 +1,14 @@
+{
+  "name": "pathfinder-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @pathfinder/web",
+    "build": "npm run build --workspace @pathfinder/web",
+    "lint": "npm run lint --workspace @pathfinder/web",
+    "typecheck": "npm run typecheck --workspace @pathfinder/web"
+  }
+}
