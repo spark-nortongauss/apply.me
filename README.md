@@ -128,14 +128,21 @@ Deploy `services/ai-engine` as containerized FastAPI service and set `AI_SERVICE
 
 ## Build Failure Fix (Vercel prerender `/404`)
 
-The previous deployment failed during prerender because the app mixed App Router pages with unstable React 19 RC + legacy Pages Router error rendering behavior. That combination caused Vercel to execute `.next/server/pages/_error.js` and crash with `useContext` on `null`.
+The prior Vercel failures were caused by **React 19 RC behavior in a mixed SSR/prerender path**. During `/404` prerender, Next.js fell back to Pages Router internals (`.next/server/pages/_error.js`) while parts of the app were rendered with a different React dispatcher context, producing `Cannot read properties of null (reading "useContext")`.
 
-What changed:
+### Why React 19 RC caused crashes
 
-- Standardized on stable `react@18.2.0` and `react-dom@18.2.0` and enforced workspace-wide versions via root `overrides`.
-- Upgraded Next.js to a patched 15.2.x release.
-- Added App Router-native `app/not-found.tsx` and `app/error.tsx` handlers so `/404` prerender uses App Router boundaries.
-- Isolated animation/3D dependencies (`gsap`, `three`) behind client-only dynamic imports (`ssr: false`) to avoid server execution.
-- Replaced deprecated Supabase auth helper usage with `@supabase/ssr` and moved OAuth callback exchange to server route handler cookie-aware clients.
+- React 19 RC is not the stable baseline expected by mixed Next.js runtime paths used in this repo.
+- In monorepos, RC + mixed semver ranges can resolve to multiple React copies, so server-rendered components may execute with a different dispatcher instance than the one providing context.
+- When that happens, any hook call (`useContext`, `useMemo`, etc.) can crash at prerender time because the active dispatcher is `null`.
 
-This keeps prerender deterministic and prevents Pages Router fallback logic from running in production builds.
+### Stabilization actions
+
+- Pinned `react` and `react-dom` to `18.2.0` in root and `apps/web`, plus root `overrides` to force a single React runtime across all workspaces.
+- Upgraded `next` to `^15.3.0` to remove the `next@15.2.4` vulnerability warning.
+- Kept Supabase SSR integration on `@supabase/ssr` (and removed any use of deprecated auth helpers).
+- Standardized App Router error boundaries with lightweight `app/error.tsx` and `app/not-found.tsx` so `/404` prerender resolves through App Router instead of legacy Pages fallback.
+- Added root `vercel.json` install/build directives for deterministic Vercel behavior.
+- Lockfile regeneration is required after dependency changes to keep installs reproducible in CI and Vercel.
+
+These changes keep SSR prerender deterministic and eliminate the React dispatcher mismatch that triggered Vercel build instability.
