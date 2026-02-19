@@ -2,15 +2,10 @@
 
 ## Vercel (Monorepo)
 
-For this monorepo, set the Vercel **Project Root Directory** to:
+This repository is configured to deploy from the repository root via `vercel.json`.
 
-- `apps/web`
+- Install command: `npm install`
+- Build command: `npm run build --workspace @pathfinder/web`
+- Output directory: `apps/web/.next`
 
-If the project root is left at the repository root, Vercel may look for Next.js build output in the wrong place (for example, `/vercel/path0/.next`) and fail with:
-
-- `The Next.js output directory .next was not found at /vercel/path0/.next`
-
-Build scripts to keep:
-
-- Root: `npm run build --workspace @pathfinder/web`
-- `apps/web`: `next build`
+If your Vercel project is instead configured with **Root Directory = `apps/web`**, remove the root-level output override and use default Next.js settings for that app-rooted project.
