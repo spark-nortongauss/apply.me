@@ -24,6 +24,13 @@ const sections = [
   "Pricing: free intelligence layer + premium copilots and recruiter tools."
 ];
 
+const navItems = [
+  { href: "#how-it-works", label: "How it works" },
+  { href: "#stories", label: "Stories" },
+  { href: "#recruiters", label: "Recruiters" },
+  { href: "#pricing", label: "Pricing" }
+];
+
 export function LandingSectionsContent() {
   useEffect(() => {
     gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
@@ -42,7 +49,30 @@ export function LandingSectionsContent() {
 
   return (
     <div className="space-y-20 pb-20">
-      <section className="section-shell grid gap-8 pt-12 lg:grid-cols-2 lg:items-center">
+      <header className="sticky top-0 z-40 border-b border-secondary/20 bg-background/95 backdrop-blur">
+        <div className="section-shell flex h-16 items-center justify-between">
+          <a href="#top" className="text-lg font-semibold text-primary">
+            Pathfinder
+          </a>
+          <nav className="hidden items-center gap-6 md:flex">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-text/80 transition hover:text-primary"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className="flex items-center gap-2">
+            <Button variant="outline">Sign In</Button>
+            <Button>Get Started</Button>
+          </div>
+        </div>
+      </header>
+
+      <section id="top" className="section-shell grid gap-8 pt-4 lg:grid-cols-2 lg:items-center">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-secondary">Pathfinder</p>
           <h1 className="mt-3 text-4xl font-bold text-primary lg:text-6xl">Career Intelligence for Human Potential.</h1>
@@ -57,9 +87,22 @@ export function LandingSectionsContent() {
         <CareerNetworkHero />
       </section>
 
-      <section className="section-shell grid gap-5 md:grid-cols-2">
+      <section id="how-it-works" className="section-shell grid gap-5 md:grid-cols-2">
         {sections.map((section) => (
-          <motion.div key={section} className="reveal" whileHover={{ y: -4 }}>
+          <motion.div
+            key={section}
+            className="reveal"
+            whileHover={{ y: -4 }}
+            id={
+              section.startsWith("Candidate stories")
+                ? "stories"
+                : section.startsWith("Recruiter benefits")
+                  ? "recruiters"
+                  : section.startsWith("Pricing")
+                    ? "pricing"
+                    : undefined
+            }
+          >
             <Card className="h-full border-secondary/20">
               <p className="text-lg font-medium text-primary">{section}</p>
             </Card>
