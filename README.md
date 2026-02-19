@@ -39,6 +39,8 @@ Pathfinder is a production-focused **Career Intelligence Platform** built as a m
 
 ## Local Development
 
+> Recommended: run commands from the repo root unless a step explicitly says to `cd` into a subfolder.
+
 ### 1) Install dependencies
 
 ```bash
@@ -60,6 +62,18 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+### 3.1) Helpful monorepo commands
+
+Use these root-level scripts for common web app checks:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
+
+These scripts proxy to the `@pathfinder/web` workspace so CI/local behavior stays consistent.
 
 ### 4) Run the FastAPI AI service
 
@@ -94,6 +108,8 @@ python manage.py runserver 0.0.0.0:8002
 4. Create Storage bucket for CV uploads (e.g. `documents`).
 
 ## Deployment
+
+For additional deployment notes (including environment variable guidance), see `README_DEPLOY.md`.
 
 ### Vercel (web)
 
