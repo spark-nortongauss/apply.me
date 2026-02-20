@@ -1,2 +1,8 @@
-export { dynamic, revalidate } from "./(marketing)/page";
-export { default } from "./(marketing)/page";
+import { LandingSections } from "@/components/landing/landing-sections";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default function Page() {
+  return <LandingSections />;
+}
